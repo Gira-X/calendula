@@ -35,7 +35,8 @@
         android:padding="8dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_presentation_2"
-        android:visibility="visible"/>
+        android:visibility="invisible"
+        tools:visibility="invisible" />
 
 
     <TextView

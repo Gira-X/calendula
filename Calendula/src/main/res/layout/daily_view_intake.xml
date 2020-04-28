@@ -151,12 +151,14 @@
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-condensed"
                 android:gravity="bottom"
-                tools:text="Breakfast"
                 android:textAllCaps="false"
                 android:textColor="@color/agenda_item_title"
                 android:textSize="20dp"
                 android:textStyle="bold"
-                android:transitionName="title"/>
+                android:transitionName="title"
+                android:visibility="invisible"
+                tools:text="Breakfast"
+                tools:visibility="invisible" />
 
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -175,7 +177,9 @@
                     android:layout_gravity="center_vertical"
                     android:background="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_alarm_black_48dp"/>
+                    android:src="@drawable/ic_alarm_black_48dp"
+                    android:visibility="gone"
+                    tools:visibility="gone" />
 
                 <TextView
                     android:id="@+id/routines_list_item_hour"
@@ -249,16 +253,16 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="10dp"
+            android:layout_marginRight="16dp"
             android:background="@null"
-            android:paddingBottom="5dp"
             android:paddingLeft="5dp"
-            android:paddingRight="5dp"
             android:paddingTop="5dp"
+            android:paddingRight="5dp"
+            android:paddingBottom="5dp"
             android:scaleType="fitCenter"
             android:transitionName="avatar_transition"
-            android:visibility="visible"/>
+            android:visibility="invisible" />
 
     </RelativeLayout>
 </LinearLayout>

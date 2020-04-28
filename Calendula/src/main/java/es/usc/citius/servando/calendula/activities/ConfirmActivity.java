@@ -64,6 +64,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -99,8 +102,6 @@ public class ConfirmActivity extends CalendulaActivity {
     protected AppBarLayout appBarLayout;
     @BindView(R.id.collapsing_toolbar)
     protected CollapsingToolbarLayout toolbarLayout;
-    @BindView(R.id.myFAB)
-    protected FloatingActionButton fab;
     @BindView(R.id.patient_avatar)
     protected ImageView avatar;
     @BindView(R.id.patient_avatar_title)
@@ -286,64 +287,12 @@ public class ConfirmActivity extends CalendulaActivity {
         }
     }
 
-    void onClickFab() {
-        boolean somethingChecked = false;
-        for (DailyScheduleItem item : items) {
-            if (!item.getTakenToday()) {
-                item.setTakenToday(true);
-                DB.dailyScheduleItems().saveAndUpdateStock(item, true);
-                somethingChecked = true;
-            }
-
-        }
-
-        if (somethingChecked) {
-            itemAdapter.notifyDataSetChanged();
-            stateChanged = true;
-            fab.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    animateAllChecked();
-                }
-            }, 100);
-            onAllChecked();
-        } else {
-            supportFinishAfterTransition();
-        }
-    }
-
     void moveArrowsDown(int duration) {
         checkAllImage.animate()
                 .translationY(ScreenUtils.dpToPx(getResources(), 150f))
                 .setDuration(duration)
                 .setInterpolator(new OvershootInterpolator())
                 .start();
-    }
-
-    void showRippleByApi(int x, int y) {
-
-        int duration = 500;
-        int arrowDuration = 400;
-
-        checkAllOverlay.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    finishAndRemoveTask();
-                } else {
-                    finish();
-                }
-            }
-        }, duration + 300);
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            showRipple(x, y, duration);
-        } else {
-            checkAllOverlay.setVisibility(View.VISIBLE);
-            checkAllOverlay.animate().alpha(1).setDuration(duration).start();
-        }
-        moveArrowsDown(arrowDuration);
     }
 
     @Override
@@ -383,49 +332,11 @@ public class ConfirmActivity extends CalendulaActivity {
         minute.setText(time.toString("mm"));
         friendlyTime.setText(String.format("%s%s", relativeTime.substring(0, 1).toUpperCase(), relativeTime.substring(1)));
 
-        if (isDistant) {
-            fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.android_orange_dark)));
-        }
-
-        fab.setImageDrawable(new IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon.cmd_check_all)
-                .color(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(0));
-
-
         checkAllImage.setImageDrawable(new IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_check_all)
                 .color(Color.WHITE)
                 .sizeDp(100)
                 .paddingDp(0));
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                boolean somethingToCheck = false;
-                for (DailyScheduleItem item : items) {
-                    if (!item.getTakenToday()) {
-                        somethingToCheck = true;
-                        break;
-                    }
-                }
-                if (somethingToCheck) {
-                    if (isDistant) {
-                        showEnsureConfirmDialog(new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                onClickFab();
-                            }
-                        }, false);
-                    } else {
-                        onClickFab();
-                    }
-                } else {
-                    Snack.show(getResources().getString(R.string.all_meds_taken), ConfirmActivity.this);
-                }
-            }
-        });
 
 
         toolbarLayout.setContentScrimColor(patient.getColor());
@@ -485,67 +396,6 @@ public class ConfirmActivity extends CalendulaActivity {
         super.onDestroy();
     }
 
-    private void animateAllChecked() {
-
-        int width = appBarLayout.getWidth();
-        int middle = width / 2;
-        int fabCentered = middle - fab.getWidth() / 2;
-        int translationX = (int) fab.getX() - fabCentered;
-        int translationY = ScreenUtils.dpToPx(getResources(), 150);
-
-        final int rippleX = middle;
-        final int rippleY = (int) (fab.getY() + fab.getHeight() / 2) - translationY;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-            Animation arcAnimation = new ArcTranslateAnimation(0, -translationX, 0, -translationY);
-            arcAnimation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    showRippleByApi(rippleX, rippleY);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
-
-            arcAnimation.setInterpolator(new DecelerateInterpolator());
-            arcAnimation.setDuration(200);
-            arcAnimation.setFillAfter(true);
-            fab.startAnimation(arcAnimation);
-
-        } else {
-            ViewPropertyAnimator animator = fab.animate().translationX(-translationX).setDuration(300);
-            animator.setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    showRippleByApi(rippleX, rippleY);
-                }
-            });
-            animator.start();
-        }
-    }
-
-    private void showRipple(int x, int y, int duration) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            LogUtil.d(TAG, "Ripple x,y [" + x + ", " + y + "]");
-            checkAllOverlay.setVisibility(View.INVISIBLE);
-            // get the final radius for the clipping circle
-            int finalRadius = (int) Math.hypot(checkAllOverlay.getWidth(), checkAllOverlay.getHeight());
-            // create the animator for this view (the start radius is zero)
-            Animator anim = ViewAnimationUtils.createCircularReveal(checkAllOverlay, x, y, fab.getWidth() / 2, finalRadius);
-            anim.setInterpolator(new DecelerateInterpolator());
-            // make the view visible and start the animation
-            checkAllOverlay.setVisibility(View.VISIBLE);
-            anim.setDuration(duration).start();
-        }
-    }
-
     private void setupListView() {
 
         loadItems();
@@ -593,9 +443,18 @@ public class ConfirmActivity extends CalendulaActivity {
         }
     }
 
+    public class ScheduleItemComparator implements Comparator<ScheduleItem> {
+        @Override
+        public int compare(ScheduleItem o1, ScheduleItem o2) {
+            return o1.getSchedule().medicine.getName().compareTo(
+                    o2.getSchedule().medicine.getName());
+        }
+    }
+
     private void loadItems() {
         if (isRoutine) {
-            List<ScheduleItem> rsi = routine.getScheduleItems();
+            ArrayList<ScheduleItem> rsi = new ArrayList<>(routine.getScheduleItems());
+            Collections.sort(rsi, new ScheduleItemComparator());
             LogUtil.d(TAG, rsi.size() + " items");
             for (ScheduleItem si : rsi) {
                 DailyScheduleItem item = DB.dailyScheduleItems().findByScheduleItemAndDate(si, date);
@@ -731,27 +590,11 @@ public class ConfirmActivity extends CalendulaActivity {
             @Override
             public void onClick(View view) {
                 final boolean taken = dailyScheduleItem.getTakenToday();
-                if (isDistant) {
-                    showEnsureConfirmDialog(new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dailyScheduleItem.setTakenToday(!taken);
-                            DB.dailyScheduleItems().saveAndUpdateStock(dailyScheduleItem, true);
-                            stateChanged = true;
-                            onDailyAgendaItemCheck(check);
-                            notifyItemChanged(getAdapterPosition());
-                        }
-                    }, taken);
-                } else {
-
-                    dailyScheduleItem.setTakenToday(!taken);
-                    DB.dailyScheduleItems().saveAndUpdateStock(dailyScheduleItem, true);
-                    stateChanged = true;
-                    onDailyAgendaItemCheck(check);
-                    notifyItemChanged(getAdapterPosition());
-                }
-
-
+                dailyScheduleItem.setTakenToday(!taken);
+                DB.dailyScheduleItems().saveAndUpdateStock(dailyScheduleItem, true);
+                stateChanged = true;
+                onDailyAgendaItemCheck(check);
+                notifyItemChanged(getAdapterPosition());
             }
         }
     }

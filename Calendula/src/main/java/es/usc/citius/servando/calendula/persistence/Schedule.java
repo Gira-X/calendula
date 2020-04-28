@@ -72,7 +72,7 @@ public class Schedule {
     @DatabaseField(columnName = COLUMN_ID, generatedId = true)
     private Long id;
     @DatabaseField(columnName = COLUMN_MEDICINE, foreign = true, foreignAutoRefresh = true)
-    private Medicine medicine;
+    public Medicine medicine;
     @DatabaseField(columnName = COLUMN_DAYS, persisterClass = BooleanArrayPersister.class)
     private boolean[] days = noWeekDays();
     @DatabaseField(columnName = COLUMN_RRULE, persisterClass = RRulePersister.class)

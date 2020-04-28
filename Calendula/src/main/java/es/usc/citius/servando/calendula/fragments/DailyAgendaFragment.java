@@ -126,6 +126,14 @@ public class DailyAgendaFragment extends Fragment {
 
     }
 
+    public class ScheduleItemComparator implements Comparator<ScheduleItem> {
+        @Override
+        public int compare(ScheduleItem o1, ScheduleItem o2) {
+            return o1.getSchedule().medicine.getName().compareTo(
+                    o2.getSchedule().medicine.getName());
+        }
+    }
+
     public List<DailyAgendaItemStub> buildItems() {
 
         List<DailyAgendaItemStub> stubs = new ArrayList<>();
@@ -179,7 +187,10 @@ public class DailyAgendaFragment extends Fragment {
         final Map<LocalDate, Map<Routine, DailyAgendaItemStub>> dateStubs = new HashMap<>();
         // create stubs for routine items
         for (Routine routine : DB.routines().findAll()) {
-            for (ScheduleItem scheduleItem : routine.getScheduleItems()) {
+            ArrayList<ScheduleItem> scheduledItems = new ArrayList<>(routine.getScheduleItems());
+            Collections.sort(scheduledItems, new ScheduleItemComparator());
+
+            for (ScheduleItem scheduleItem : scheduledItems) {
                 // get item from daily agenda if exists
                 List<DailyScheduleItem> dailyScheduleItems = DB.dailyScheduleItems().findAllByScheduleItem(scheduleItem);
 
@@ -404,26 +415,7 @@ public class DailyAgendaFragment extends Fragment {
             i.putExtra(CalendulaApp.INTENT_EXTRA_SCHEDULE_TIME, item.time.toString(AlarmIntentParams.TIME_FORMAT));
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-            View v1 = view.findViewById(R.id.patient_avatar);
-            View v2 = view.findViewById(R.id.linearLayout);
-            View v3 = view.findViewById(R.id.routines_list_item_name);
-
-            if (v1 != null && v2 != null && v3 != null) {
-                ActivityOptionsCompat activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        getActivity(),
-                        new Pair<>(v1, "avatar_transition"),
-                        new Pair<>(v2, "time"),
-                        new Pair<>(v3, "title")
-                );
-                ActivityCompat.startActivity(getActivity(), i, activityOptions.toBundle());
-            } else {
-                startActivity(i);
-            }
-        } else {
-            startActivity(i);
-        }
+        startActivity(i);
     }
 
     private void onBackgroundChange(int color) {
