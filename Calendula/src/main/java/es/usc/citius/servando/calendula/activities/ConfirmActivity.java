@@ -238,42 +238,6 @@ public class ConfirmActivity extends CalendulaActivity {
 
     }
 
-    public void showEnsureConfirmDialog(final DialogInterface.OnClickListener listener, boolean uncheck) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        DateTime t = date.toDateTime(time);
-
-        String title = t.isAfterNow() ? getString(R.string.intake_not_available) :
-                getString(R.string.meds_from) + " " + date.toString("EEEE dd") + " " + getString(R.string.at_time_connector) + " " + time.toString(timeFormatter);
-
-        String msg = t.isAfterNow() ? getString(R.string.confirm_future_intake_warning, relativeTime)
-                : uncheck ? getString(R.string.unconfirm_past_intake_warning, relativeTime)
-                : getString(R.string.confirm_past_intake_warning);
-
-
-        builder.setMessage(msg)
-                .setCancelable(true)
-                .setIcon(IconUtils.icon(this, CommunityMaterial.Icon.cmd_history, R.color.black, 36))
-                .setTitle(title);
-
-        if (t.isAfterNow()) {
-            builder.setNegativeButton(getString(R.string.tutorial_understood), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
-        } else {
-            builder.setPositiveButton(uncheck ? getString(R.string.meds_unconfirm_ok) : getString(R.string.meds_confirm_ok), listener)
-                    .setNegativeButton(uncheck ? getString(R.string.meds_unconfirm_cancel) : getString(R.string.meds_confirm_cancel), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-        }
-
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     @Override
     public void onBackPressed() {
         if (fromNotification) {
@@ -285,14 +249,6 @@ public class ConfirmActivity extends CalendulaActivity {
         } else {
             super.onBackPressed();
         }
-    }
-
-    void moveArrowsDown(int duration) {
-        checkAllImage.animate()
-                .translationY(ScreenUtils.dpToPx(getResources(), 150f))
-                .setDuration(duration)
-                .setInterpolator(new OvershootInterpolator())
-                .start();
     }
 
     @Override
