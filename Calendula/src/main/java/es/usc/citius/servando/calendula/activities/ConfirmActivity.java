@@ -170,15 +170,7 @@ public class ConfirmActivity extends CalendulaActivity {
         getMenuInflater().inflate(R.menu.confirm, menu);
 
         MenuItem item = menu.findItem(R.id.action_delay);
-
-        if (!isInWindow) {
-            item.setVisible(false);
-        } else {
-            item.setIcon(new IconicsDrawable(this)
-                    .icon(CommunityMaterial.Icon.cmd_history)
-                    .color(Color.WHITE)
-                    .sizeDp(24));
-        }
+        item.setVisible(false);
 
         return true;
     }

@@ -7,11 +7,12 @@ The Medical Medium supplements can be taken almost whenever throughout the day, 
 
 ### Small fixes
 
-* Supplements are sorted alphabetically in Agenda and Confirm activity
+* Removed annoying confirmation dialogs in ConfirmActivity about past or future times
+* Supplements are sorted alphabetically in Agenda and ConfirmActivity
 * Removed many icons from the Agenda view and enlargened `RecyclerView` supplement texts for easier display
-  * The pill icons are not useful for me
+  * The pill icons are not useful for me, as well as the multiple users feature
 * Fixed the height bug in the ConfirmActivity `RecyclerView` by not using a collapsing toolbar
-  * The last item gets cut off apparently on many items
+  * When one has a long list, the height is calculated incorrectly and it happened that the last items get cut off from display
 * Also removed a few fancy materialish-animations
 
 All of those are super quick dirty-hotfixes for myself, so take care ;)

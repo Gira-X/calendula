@@ -501,13 +501,13 @@ public class DailyAgendaRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         public void onClick(View view) {
             LogUtil.d(TAG, "Click row, listener is null? " + (listener == null));
             if (view.getId() == R.id.check_all_button || view.getId() == R.id.action_container) {
-                hideCheckAllButton();
+                // hideCheckAllButton();
             } else if (listener != null) {
                 listener.onItemClick(view, stub, getAdapterPosition());
             }
         }
 
-        public void hideCheckAllButton() {
+        /*public void hideCheckAllButton() {
             actionsView.animate().setDuration(100).alpha(0).scaleY(0.5f).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
@@ -519,7 +519,7 @@ public class DailyAgendaRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                     updateItem(getAdapterPosition());
                 }
             });
-        }
+        }*/
     }
 
 }
