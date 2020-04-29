@@ -18,3 +18,8 @@ The Medical Medium supplements can be taken almost whenever throughout the day, 
 All of those are super quick dirty-hotfixes for myself, so take care ;)
 
 ### Screenshots
+
+![Screenshot 1](https://github.com/Gira-X/calendula/raw/master/assets/screenshots/screen.png)
+![Screenshot 2](https://github.com/Gira-X/calendula/raw/master/assets/screenshots/screen2.png)
+
+| <img src="https://github.com/Gira-X/calendula/raw/master/assets/screenshots/screen.png" width="230px"/>  | <img src="https://github.com/Gira-X/calendula/raw/master/assets/screenshots/screen2.png" width="230px"/>
